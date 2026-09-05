@@ -94,3 +94,40 @@ class TransactionNormalizer:
             )
         except Exception:
             return None
+
+    @classmethod
+    def from_etherscan_erc20(cls, item: Dict[str, Any]) -> Optional[Transaction]:
+        """Normalizes Etherscan tokentx ERC-20 transfer JSON object"""
+        try:
+            tx_hash = item.get("hash") or item.get("transactionHash")
+            from_addr = item.get("from")
+            to_addr = item.get("to")
+
+            raw_value = float(item.get("value", 0))
+            decimals = int(item.get("tokenDecimal", 6))
+            amount = raw_value / (10 ** decimals)
+
+            ts = item.get("timeStamp") or item.get("timestamp")
+            if ts:
+                try:
+                    ts = int(ts)
+                except ValueError:
+                    pass
+            timestamp = cls._format_timestamp(ts)
+
+            if not tx_hash or not from_addr or not to_addr:
+                return None
+
+            return Transaction(
+                tx_hash=str(tx_hash),
+                from_address=str(from_addr),
+                to_address=str(to_addr),
+                amount=amount,
+                token=str(item.get("tokenSymbol", "USDT")),
+                timestamp=timestamp,
+                chain="ethereum",
+                block_number=int(item.get("blockNumber")) if item.get("blockNumber") else None
+            )
+        except Exception:
+            return None
+

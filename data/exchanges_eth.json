@@ -1,0 +1,79 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-09-03T00:00:00Z",
+  "description": "Database of known exchange hot/cold wallets and deposit infrastructure on Ethereum (ERC20)",
+  "entities": [
+    {
+      "address": "0x00000000219ab540356cBB839Cbe05303d7705Fa",
+      "entity_name": "Beacon Deposit Contract",
+      "entity_type": "Staking / Protocol",
+      "wallet_type": "Deposit Contract",
+      "confidence": 0.99,
+      "source": "Ethereum Official Staking Deposit Contract",
+      "notes": "Official Ethereum Beacon Chain Staking Deposit Contract"
+    },
+    {
+      "address": "0x28C6c06298d514Db089934071355E5743bf21d60",
+      "entity_name": "Binance",
+      "entity_type": "Exchange",
+      "wallet_type": "Hot Wallet",
+      "confidence": 0.99,
+      "source": "Etherscan Official Verified Tag ('Binance 14')",
+      "notes": "Official Binance ERC20 Hot Wallet"
+    },
+    {
+      "address": "0x21a31Ee1afC51d94C2eFcCAa2092aD1028285549",
+      "entity_name": "Binance",
+      "entity_type": "Exchange",
+      "wallet_type": "Hot Wallet",
+      "confidence": 0.99,
+      "source": "Etherscan Official Verified Tag ('Binance 15')",
+      "notes": "Official Binance ERC20 Hot Wallet 15"
+    },
+    {
+      "address": "0x6cC5F688a315f3dC28A7781717a9A798a59fA778",
+      "entity_name": "OKX",
+      "entity_type": "Exchange",
+      "wallet_type": "Hot Wallet",
+      "confidence": 0.98,
+      "source": "Etherscan Official Verified Tag ('OKX 3')",
+      "notes": "Official OKX ERC20 Hot Wallet"
+    },
+    {
+      "address": "0x5754284f345afc66a98fbf0a0afe7969c3628628",
+      "entity_name": "Tether Treasury",
+      "entity_type": "Issuer / Treasury",
+      "wallet_type": "Treasury Wallet",
+      "confidence": 0.99,
+      "source": "Tether Official Audit & Etherscan Verified ('Tether Treasury')",
+      "notes": "Official Tether USDT-ERC20 Issuer Treasury Wallet"
+    },
+    {
+      "address": "0x0D0707963952f2a77299197a1f849334276C728E",
+      "entity_name": "Kraken",
+      "entity_type": "Exchange",
+      "wallet_type": "Hot Wallet",
+      "confidence": 0.97,
+      "source": "Etherscan Verified Tag ('Kraken 1')",
+      "notes": "Kraken Exchange Hot Wallet"
+    },
+    {
+      "address": "0xA9D1e08C7793Af67e9d92fe308d5697FB81d3E43",
+      "entity_name": "Coinbase",
+      "entity_type": "Exchange",
+      "wallet_type": "Hot Wallet",
+      "confidence": 0.99,
+      "source": "Etherscan Official Tag ('Coinbase 10')",
+      "notes": "Coinbase Main ERC20 Deposit Aggregator"
+    },
+    {
+      "address": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
+      "entity_name": "Uniswap",
+      "entity_type": "DEX / Protocol",
+      "wallet_type": "Swap Router",
+      "confidence": 0.99,
+      "source": "Etherscan Official Verified Tag ('Uniswap V3: Router')",
+      "notes": "Uniswap V3 Swap Router Contract"
+    }
+  ]
+}

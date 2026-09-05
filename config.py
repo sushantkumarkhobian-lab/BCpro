@@ -26,7 +26,16 @@ class Settings:
     PORT: int = int(os.getenv("PORT", "8000"))
     DEBUG_MODE: bool = os.getenv("DEBUG_MODE", "true").lower() == "true"
 
-    # Smart Contract Address for TRC20 USDT on Tron Mainnet
+    # Chain target setting ('tron' or 'ethereum')
+    TARGET_CHAIN: str = os.getenv("TARGET_CHAIN", "tron").strip().lower()
+
+    # Ethereum Ingestion Settings
+    ETHERSCAN_API_KEY: str = os.getenv("ETHERSCAN_API_KEY", "").strip()
+    ETHERSCAN_BASE_URL: str = os.getenv("ETHERSCAN_BASE_URL", "https://api.etherscan.io/api").strip()
+    ETH_NODE_URL: str = os.getenv("ETH_NODE_URL", "").strip()
+
+    # Smart Contract Address for TRC20 USDT on Tron Mainnet & ERC20 USDT on Ethereum Mainnet
     USDT_TRC20_CONTRACT: str = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
+    USDT_ERC20_CONTRACT: str = os.getenv("USDT_ERC20_CONTRACT", "0xdAC17F958D2ee523a2206206994597C13D831ec7").strip()
 
 settings = Settings()

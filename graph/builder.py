@@ -1,9 +1,10 @@
 import networkx as nx
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple, Optional
 import logging
 
 from schemas.models import Transaction, GraphNode, GraphEdge, GraphResponse
 from ingestion.tron_client import TronClient
+from ingestion.client_factory import get_blockchain_client
 from config import settings
 
 logger = logging.getLogger(__name__)
@@ -11,8 +12,9 @@ logger = logging.getLogger(__name__)
 class TransactionGraphBuilder:
     """Builds and manages a directed NetworkX graph of wallet transactions via BFS expansion"""
 
-    def __init__(self, tron_client: TronClient):
-        self.tron_client = tron_client
+    def __init__(self, client=None, tron_client: Optional[TronClient] = None):
+        self.client = client or tron_client
+        self.tron_client = self.client  # Backward compatibility alias
         self.graph = nx.DiGraph()
         self.node_hops: Dict[str, int] = {}
         self.all_transactions: List[Transaction] = []
@@ -27,6 +29,8 @@ class TransactionGraphBuilder:
         self.all_transactions.clear()
 
         seed_clean = seed_address.strip()
+        active_client = self.client or get_blockchain_client(seed_clean)
+
         self.node_hops[seed_clean] = 0
         self.graph.add_node(seed_clean, hop=0, is_seed=True)
 
@@ -44,8 +48,8 @@ class TransactionGraphBuilder:
                     continue
                 visited_nodes.add(wallet)
 
-                # Fetch transactions for current wallet node
-                txs = await self.tron_client.get_wallet_transactions(wallet, limit=settings.MAX_TRANSACTIONS_PER_WALLET)
+                # Fetch transactions for current wallet node using appropriate chain client
+                txs = await active_client.get_wallet_transactions(wallet, limit=settings.MAX_TRANSACTIONS_PER_WALLET)
                 
                 for tx in txs:
                     self.all_transactions.append(tx)

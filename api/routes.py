@@ -7,6 +7,7 @@ from schemas.models import (
     AttributionResult, Transaction
 )
 from ingestion.tron_client import TronClient
+from ingestion.client_factory import get_blockchain_client
 from graph.builder import TransactionGraphBuilder
 from clustering.engine import ClusteringEngine
 from tracing.tracer import MultiHopTracer
@@ -16,7 +17,7 @@ router = APIRouter()
 
 # Instantiate singletons
 tron_client = TronClient()
-graph_builder = TransactionGraphBuilder(tron_client)
+graph_builder = TransactionGraphBuilder()
 clustering_engine = ClusteringEngine()
 attribution_matcher = ExchangeAttributionMatcher()
 
@@ -28,7 +29,8 @@ async def health_check():
         "service": "wallettrace-blockchain",
         "version": "1.0.0",
         "use_mock_data": settings.USE_MOCK_DATA,
-        "primary_chain": "tron (USDT-TRC20)",
+        "target_chain": settings.TARGET_CHAIN,
+        "supported_chains": ["tron (USDT-TRC20)", "ethereum (USDT-ERC20)"],
         "default_max_hops": settings.MAX_HOPS
     }
 
@@ -36,7 +38,7 @@ async def health_check():
 async def trace_wallet(req: TraceRequest):
     """
     Executes complete end-to-end forensic investigation for a seed suspicious/victim wallet address:
-    1. Blockchain Data Ingestion (Tron API / Mock)
+    1. Blockchain Data Ingestion (Tron API / Etherscan API / Mock)
     2. NetworkX Transaction Graph Construction & BFS Expansion
     3. Account-based Explainable Address Clustering
     4. Peel-Chain Multi-Hop Fund Tracing
@@ -94,7 +96,8 @@ async def trace_wallet(req: TraceRequest):
 @router.get("/cluster/{address}", response_model=List[Cluster], summary="Get Wallet Cluster & Evidence", tags=["Clustering"])
 async def get_cluster_for_address(address: str = APIPath(..., description="Wallet address to check")):
     """Returns cluster membership and explainable heuristic evidence for a wallet address"""
-    txs = await tron_client.get_wallet_transactions(address)
+    client = get_blockchain_client(address)
+    txs = await client.get_wallet_transactions(address)
     if not txs:
         return []
     
@@ -123,7 +126,8 @@ async def get_attribution_for_address(address: str = APIPath(..., description="W
 @router.get("/address/{address}", summary="Get Address Details & Transactions", tags=["Ingestion"])
 async def get_address_details(address: str = APIPath(..., description="Wallet address")):
     """Returns summary and raw normalized USDT transactions involving the specified wallet"""
-    txs = await tron_client.get_wallet_transactions(address)
+    client = get_blockchain_client(address)
+    txs = await client.get_wallet_transactions(address)
     inflow = sum(t.amount for t in txs if t.to_address.lower() == address.strip().lower())
     outflow = sum(t.amount for t in txs if t.from_address.lower() == address.strip().lower())
     
@@ -134,3 +138,4 @@ async def get_address_details(address: str = APIPath(..., description="Wallet ad
         "total_usdt_outflow": round(outflow, 2),
         "transactions": txs
     }
+
